@@ -382,31 +382,6 @@ ul, ol { list-style: none; }
 .member-card h3 { font-size: 1.12rem; font-weight: 500; padding: 18px 20px 4px; }
 .member-card p { color: var(--accent-hi); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.68rem; padding: 0 20px 20px; }
 
-/* supporting: 2-col editorial list */
-.support-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 48px;
-  margin-top: 40px;
-}
-.support-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 18px 4px;
-  border-bottom: 1px solid var(--line);
-}
-.support-item img {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(67, 196, 101, 0.4);
-  flex-shrink: 0;
-}
-.support-item h3 { font-size: 1.1rem; font-weight: 500; }
-.support-item p { color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.68rem; margin-top: 4px; }
-
 /* special thanks: quiet full-width band */
 .thanks {
   background: var(--surface);
@@ -632,7 +607,6 @@ ul, ol { list-style: none; }
 
   .leader-grid { grid-template-columns: 1fr; }
   .leader-card, .leader-flip { grid-template-columns: 140px 1fr; gap: 20px; padding: 20px; }
-  .support-list { grid-template-columns: 1fr; }
   .thanks-person { flex-direction: column; align-items: flex-start; gap: 20px; }
   .program-list li { flex-direction: column; gap: 8px; align-items: flex-start; }
   .terminal-links a { flex-wrap: wrap; row-gap: 6px; }
