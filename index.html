@@ -249,10 +249,34 @@
       <p class="eyebrow mono rv">Open call</p>
       <h2 class="join-title rv" style="--d:60ms">Join Chapter 02.</h2>
       <p class="join-copy rv" style="--d:120ms">Open to every Bundelkhand University student, all years, all branches. You get peer learning, coding contests, and build nights — plus a crew that ships.</p>
-      <!-- TODO: replace the "#" below with the chapter's Google Form URL -->
-      <div class="rv" style="--d:180ms"><a class="btn btn-primary btn-lg" href="#">Join the chapter</a></div>
-      <!-- TODO: fill in the chapter's email address in the mailto link below -->
-      <p class="join-alt rv" style="--d:220ms">Prefer email? <a href="mailto:">Write to the chapter</a></p>
+      <p class="join-count rv mono" style="--d:160ms;display:none" id="joinCount" aria-live="polite"><span id="joinCountNum">…</span> <span id="joinCountLabel">members</span> and counting</p>
+      <form class="join-form rv" id="joinForm" style="--d:200ms" novalidate>
+        <div class="join-field">
+          <label for="joinName">Full name</label>
+          <input id="joinName" name="name" type="text" autocomplete="name" maxlength="60" placeholder="Your name" required>
+        </div>
+        <div class="join-row">
+          <div class="join-field">
+            <label for="joinBranch">Branch</label>
+            <select id="joinBranch" name="branch" required>
+              <option value="" disabled selected>Select branch</option>
+              <option>CSE</option><option>IT</option><option>ECE</option>
+              <option>EE</option><option>ME</option><option>CE</option>
+              <option>AI&amp;DS</option><option>Other</option>
+            </select>
+          </div>
+          <div class="join-field">
+            <label for="joinYear">Year</label>
+            <select id="joinYear" name="year" required>
+              <option value="" disabled selected>Select year</option>
+              <option value="1">1st year</option><option value="2">2nd year</option>
+              <option value="3">3rd year</option><option value="4">4th year</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit" id="joinSubmit">Count me in</button>
+        <p class="join-msg" id="joinMsg" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 

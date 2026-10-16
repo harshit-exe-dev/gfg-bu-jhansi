@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Chapter 02</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .admin-wrap { max-width: 960px; margin: 0 auto; padding: calc(var(--nav-h) + 40px) 20px 80px; }
+  .admin-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+  .admin-card h2 { font-size: 1.4rem; margin-bottom: 16px; letter-spacing: -0.01em; }
+  .admin-login { max-width: 420px; margin: 0 auto; }
+  .admin-login input { width: 100%; padding: 14px 16px; font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 14px; }
+  .admin-login input:focus { outline: none; border-color: var(--accent); }
+  .admin-msg { min-height: 1.5em; font-size: 0.9rem; color: var(--muted); margin-top: 12px; }
+  .admin-msg.err { color: #e5686e; } .admin-msg.ok { color: var(--accent-hi); }
+  .stat-big { font-size: 3rem; font-weight: 700; color: var(--accent-hi); letter-spacing: -0.03em; }
+  .member-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-top: 12px; }
+  .member-table th, .member-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .member-table th { color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .member-table tr:hover td { background: rgba(67, 196, 101, 0.04); }
+  .table-scroll { overflow-x: auto; }
+  .upload-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .upload-row input[type="file"] { color: var(--muted); font-size: 0.9rem; }
+  .upload-row input[type="text"] { flex: 1; min-width: 200px; padding: 12px 14px; font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 16px; }
+  .media-cell { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface-2); }
+  .media-cell img, .media-cell video { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  .media-cell button { position: absolute; top: 6px; right: 6px; background: rgba(11,15,12,0.85); color: #e5686e; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; }
+  .admin-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+  .admin-top h1 { font-size: 1.8rem; letter-spacing: -0.02em; }
+  .linklike { background: none; border: none; color: var(--muted); font: inherit; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+  .hidden { display: none !important; }
+  .prog { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin-top: 10px; }
+  .prog > div { height: 100%; width: 0; background: var(--accent-hi); transition: width 0.2s; }
+</style>
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="container nav-inner">
+    <a class="wordmark" href="/" aria-label="GFG Chapter 02 home">
+      <span class="wordmark-gfg">GFG</span><span class="wordmark-x" aria-hidden="true">×</span><span class="wordmark-bu">BU Jhansi</span>
+    </a>
+    <div class="nav-cta"><span class="mono" style="color:var(--muted);font-size:0.8rem">admin</span></div>
+  </div>
+</header>
+
+<main class="admin-wrap">
+
+  <!-- LOGIN -->
+  <section class="admin-card admin-login" id="loginCard">
+    <h2>Chapter admin</h2>
+    <p style="color:var(--muted);font-size:0.92rem;margin-bottom:18px">Sign in to see members and manage the gallery.</p>
+    <form id="loginForm">
+      <input type="password" id="adminPw" placeholder="Admin password" autocomplete="current-password" required>
+      <button class="btn btn-primary" type="submit" style="width:100%">Sign in</button>
+    </form>
+    <p class="admin-msg" id="loginMsg" role="status"></p>
+  </section>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hidden">
+    <div class="admin-top">
+      <h1>Dashboard</h1>
+      <button class="linklike" id="logoutBtn">Sign out</button>
+    </div>
+
+    <section class="admin-card">
+      <h2>Members</h2>
+      <p class="stat-big" id="memberCount">—</p>
+      <p class="mono" style="color:var(--muted);font-size:0.8rem;margin-bottom:8px">total joined</p>
+      <div class="table-scroll"><table class="member-table">
+        <thead><tr><th>Name</th><th>Branch</th><th>Year</th><th>Joined</th><th></th></tr></thead>
+        <tbody id="memberRows"><tr><td colspan="5" style="color:var(--muted)">Loading…</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section class="admin-card">
+      <h2>Gallery uploads</h2>
+      <p style="color:var(--muted);font-size:0.92rem;margin-bottom:16px">Pick a photo or video — it uploads to Cloudinary, then gets saved to the site gallery.</p>
+      <div class="upload-row">
+        <input type="file" id="upFile" accept="image/*,video/*">
+        <input type="text" id="upCaption" maxlength="140" placeholder="Caption (optional)">
+        <button class="btn btn-primary btn-sm" id="upBtn">Upload</button>
+      </div>
+      <div class="prog hidden" id="upProg"><div></div></div>
+      <p class="admin-msg" id="upMsg" role="status"></p>
+      <div class="media-grid" id="mediaGrid"></div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+  // Filled in at deploy time from Harshit's Cloudinary account:
+  var CLOUDINARY_CLOUD = "mwfc5ybf";
+  var CLOUDINARY_PRESET = "gfg-gallery";
+
+  var loginCard = document.getElementById("loginCard");
+  var dash = document.getElementById("dash");
+  var tokenKey = "gfg_admin_token";
+
+  function authHeaders(extra) {
+    var h = extra || {};
+    h["Authorization"] = "Bearer " + sessionStorage.getItem(tokenKey);
+    return h;
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+  function showDash() { loginCard.classList.add("hidden"); dash.classList.remove("hidden"); loadMembers(); loadMedia(); }
+
+  /* login */
+  document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = document.getElementById("loginMsg");
+    msg.className = "admin-msg"; msg.textContent = "Signing in…";
+    fetch("/api/admin-login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: document.getElementById("adminPw").value })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.ok) { sessionStorage.setItem(tokenKey, d.token); showDash(); }
+      else { msg.textContent = (d && d.error) || "Sign in failed."; msg.classList.add("err"); }
+    }).catch(function () { msg.textContent = "Network hiccup — try again."; msg.classList.add("err"); });
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", function () {
+    sessionStorage.removeItem(tokenKey);
+    dash.classList.add("hidden"); loginCard.classList.remove("hidden");
+  });
+
+  /* members */
+  function loadMembers() {
+    fetch("/api/admin-members", { headers: authHeaders() })
+      .then(function (r) { if (r.status === 401) throw new Error("auth"); return r.json(); })
+      .then(function (d) {
+        document.getElementById("memberCount").textContent = d.count;
+        var tb = document.getElementById("memberRows");
+        if (!d.members.length) { tb.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">No members yet.</td></tr>'; return; }
+        tb.innerHTML = d.members.map(function (m) {
+          var dt = m.joinedAt ? new Date(m.joinedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—";
+          return "<tr><td>" + esc(m.name) + "</td><td>" + esc(m.branch) + "</td><td>" + esc(m.year) + "</td><td>" + esc(dt) +
+            '</td><td><button class="linklike" data-del="' + esc(m.id) + '" style="color:#e5686e">remove</button></td></tr>';
+        }).join("");
+        tb.querySelectorAll("[data-del]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm("Remove this member?")) return;
+            fetch("/api/admin-members?id=" + encodeURIComponent(btn.getAttribute("data-del")),
+              { method: "DELETE", headers: authHeaders() })
+              .then(function () { loadMembers(); }).catch(function () {});
+          });
+        });
+      })
+      .catch(function (e) {
+        if (e.message === "auth") { sessionStorage.removeItem(tokenKey); dash.classList.add("hidden"); loginCard.classList.remove("hidden"); }
+      });
+  }
+
+  /* media list (public GET is fine — URLs aren't secret) */
+  function loadMedia() {
+    fetch("/api/media").then(function (r) { return r.json(); }).then(function (d) {
+      var g = document.getElementById("mediaGrid"); g.innerHTML = "";
+      (d.items || []).forEach(function (it) {
+        var cell = document.createElement("div"); cell.className = "media-cell";
+        var inner = it.kind === "video"
+          ? '<video src="' + esc(it.url) + '" muted playsinline preload="metadata"></video>'
+          : '<img src="' + esc(it.url) + '" alt="" loading="lazy">';
+        cell.innerHTML = inner + '<button data-id="' + esc(it.id) + '">Delete</button>';
+        cell.querySelector("button").addEventListener("click", function () { delMedia(it.id); });
+        g.appendChild(cell);
+      });
+    }).catch(function () {});
+  };
+
+  function delMedia(id) {
+    if (!confirm("Delete this from the gallery?")) return;
+    fetch("/api/media?id=" + encodeURIComponent(id), { method: "DELETE", headers: authHeaders() })
+      .then(function () { loadMedia(); }).catch(function () {});
+  }
+
+  /* upload: browser -> Cloudinary (unsigned preset) -> save URL via API */
+  document.getElementById("upBtn").addEventListener("click", function () {
+    var file = document.getElementById("upFile").files[0];
+    var msg = document.getElementById("upMsg");
+    var prog = document.getElementById("upProg");
+    var bar = prog.querySelector("div");
+    msg.className = "admin-msg"; msg.textContent = "";
+    if (!file) { msg.textContent = "Pick a file first."; msg.classList.add("err"); return; }
+    if (CLOUDINARY_CLOUD.indexOf("__") === 0) { msg.textContent = "Cloudinary isn't connected yet — ask Kaly."; msg.classList.add("err"); return; }
+    if (file.size > 100 * 1024 * 1024) { msg.textContent = "File is over 100 MB."; msg.classList.add("err"); return; }
+
+    var fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", CLOUDINARY_PRESET);
+    fd.append("folder", "gfg-gallery");
+
+    prog.classList.remove("hidden"); bar.style.width = "5%";
+    msg.textContent = "Uploading…";
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://api.cloudinary.com/v1_1/" + CLOUDINARY_CLOUD + "/auto/upload");
+    xhr.upload.onprogress = function (e) { if (e.lengthComputable) bar.style.width = Math.round(e.loaded / e.total * 90) + "%"; };
+    xhr.onload = function () {
+      try {
+        var r = JSON.parse(xhr.responseText);
+        if (!r.secure_url) throw new Error("bad");
+        bar.style.width = "95%";
+        var kind = (file.type || "").indexOf("video") === 0 ? "video" : "image";
+        fetch("/api/media", {
+          method: "POST",
+          headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
+          body: JSON.stringify({ url: r.secure_url, kind: kind, caption: document.getElementById("upCaption").value.trim() })
+        }).then(function (rr) { return rr.json(); }).then(function (d) {
+          if (d && d.ok) {
+            bar.style.width = "100%";
+            msg.textContent = "Added to the gallery."; msg.classList.add("ok");
+            document.getElementById("upFile").value = ""; document.getElementById("upCaption").value = "";
+            setTimeout(function () { prog.classList.add("hidden"); bar.style.width = "0"; }, 800);
+            loadMedia();
+          } else { throw new Error("save"); }
+        }).catch(function () { msg.textContent = "Uploaded, but saving failed — try again."; msg.classList.add("err"); });
+      } catch (e2) { msg.textContent = "Upload failed — try again."; msg.classList.add("err"); }
+    };
+    xhr.onerror = function () { msg.textContent = "Upload failed — check your connection."; msg.classList.add("err"); };
+    xhr.send(fd);
+  });
+
+  if (sessionStorage.getItem(tokenKey)) showDash();
+})();
+</script>
+</body>
+</html>
