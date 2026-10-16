@@ -1,0 +1,40 @@
+# GFG Bundelkhand University Jhansi — Official Chapter Website
+
+> The official website of the GeeksforGeeks Campus Body (Chapter 02), Bundelkhand University, Jhansi. Developed by Harshit Bharti.
+
+GFG Bundelkhand University Jhansi — also called GFG BU Jhansi or GeeksforGeeks Chapter 02 — is the official GeeksforGeeks student chapter of Bundelkhand University, Jhansi, Uttar Pradesh, India. The chapter runs workshops and bootcamps, coding contests (DSA), build nights and hackathons, and study jams. Students join directly on the site in seconds.
+
+## Leadership
+
+- **Founder:** Prachi Gupta — founded the GFG chapter at Bundelkhand University.
+- **Campus Mantri:** Tanuja Yadav — leads the chapter on campus.
+- **Faculty Coordinator:** Dr. Priyanka Pande — Head of Department, Computer Science & Engineering, Bundelkhand University.
+
+## Team
+
+- Satyam Kumar — Tech Lead
+- Shambhavi Singh — Co-Tech Lead
+- Anup Kumar — Event Lead
+- Prachi Yadav — Media Lead
+- Raj Shrivas — PR & Outreach Lead
+- Harshit Bharti — Frontend Developer (also the developer of this website)
+- Ashwini Kashyap — Graphic Designer
+- Abhinav Rajpal — Backend Developer
+- Manav Kushwaha — Video Editor
+- Akansha — Content Creator
+
+## What the chapter runs
+
+- Workshops & bootcamps — hands-on, beginner-friendly sessions
+- Coding contests — timed DSA rounds with chapter rankings
+- Build nights & hackathons — form a team, ship a project, demo it
+- Study jams — group prep before placements and exams
+
+## Key pages
+
+- Home: https://gfgbujhansi.vercel.app/
+- Team (#team), Programs (#events), Learn (#learn), Gallery (#gallery), Join (#join — membership form: name, branch, year)
+
+## Developed by
+
+Harshit Bharti — B.Tech CSE student at Bundelkhand University (2024–2028) and Frontend Developer of the chapter. He designed and built this website end to end. Portfolio: https://harshit-portfolio-six-delta.vercel.app — LinkedIn: https://www.linkedin.com/in/harrshitbharrti
