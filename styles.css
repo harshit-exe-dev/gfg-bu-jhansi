@@ -12,6 +12,16 @@
 }
 
 @font-face {
+  font-family: "Montserrat";
+  src: url("assets/fonts/montserrat-var.woff2") format("woff2");
+  font-weight: 100 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Nunito";
+  src: url("assets/fonts/nunito-var.woff2") format("woff2");
+  font-weight: 200 1000; font-style: normal; font-display: swap;
+}
+@font-face {
   font-family: "Space Grotesk";
   src: url("assets/fonts/space-grotesk-400.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
@@ -160,17 +170,19 @@ ul, ol { list-style: none; }
   gap: 3px;
 }
 .wordmark-name {
-  font-weight: 700;
-  font-size: 1.3rem;
+  font-family: "Nunito", sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
   letter-spacing: -0.01em;
   color: var(--text);
 }
 .wordmark-name .for-green { color: var(--accent-hi); }
 .wordmark-sub {
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: var(--muted);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  color: #a7bcb0;
   text-transform: uppercase;
 }
 .wordmark-gfg { color: var(--accent-hi); }
