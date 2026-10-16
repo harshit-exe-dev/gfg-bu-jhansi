@@ -641,6 +641,10 @@ ul, ol { list-style: none; }
   .section { padding: 72px 0; }
   .nav-links, .nav-cta { display: none; }
   .hamburger { display: flex; }
+  .wordmark { gap: 10px; }
+  .wordmark-mark { height: 30px; }
+  .wordmark-name { font-size: 1.12rem; }
+  .wordmark-sub { display: none; }
   .nav-links.open {
     display: flex;
     position: absolute;
