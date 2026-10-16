@@ -617,6 +617,10 @@ ul, ol { list-style: none; }
   background: var(--surface);
 }
 .footer-line { color: var(--text); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; }
+.footer-social { margin: 16px 0 4px; font-size: 0.88rem; }
+.footer-social a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+.footer-social a:hover { color: var(--accent-hi); border-color: var(--accent-hi); }
+.footer-social span { color: var(--muted); margin: 0 10px; }
 .footer-sub { color: var(--muted); font-size: 0.88rem; margin-top: 4px; }
 
 /* scroll reveal */
