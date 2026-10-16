@@ -144,12 +144,18 @@ ul, ol { list-style: none; }
 }
 .wordmark {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   font-weight: 700;
   font-size: 1.05rem;
   letter-spacing: -0.01em;
   white-space: nowrap;
+}
+.wordmark-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: block;
 }
 .wordmark-gfg { color: var(--accent-hi); }
 .wordmark-x { color: var(--muted); font-weight: 400; }
