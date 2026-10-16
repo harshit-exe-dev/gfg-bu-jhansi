@@ -185,6 +185,7 @@ ul, ol { list-style: none; }
   color: #a7bcb0;
   text-transform: uppercase;
 }
+.wordmark-sub-short { display: none; }
 .wordmark-gfg { color: var(--accent-hi); }
 .wordmark-x { color: var(--muted); font-weight: 400; }
 .nav-links {
@@ -645,6 +646,7 @@ ul, ol { list-style: none; }
   .wordmark-mark { height: 30px; }
   .wordmark-name { font-size: 1.12rem; }
   .wordmark-sub { display: none; }
+  .wordmark-sub.wordmark-sub-short { display: block; font-size: 0.6rem; }
   .nav-links.open {
     display: flex;
     position: absolute;
