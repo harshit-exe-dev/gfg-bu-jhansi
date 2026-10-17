@@ -1,5 +1,14 @@
 // Chapter 02 — minimal interactions: hamburger nav + scroll reveal
 (function () {
+  // Always land at the top on fresh loads (no anchor). Keeps in-page
+  // #section links working when the user taps them in the nav.
+  if (!window.location.hash && "scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+  if (!window.location.hash) {
+    window.scrollTo(0, 0);
+  }
+
   var hamburger = document.getElementById("hamburger");
   var navLinks = document.getElementById("navLinks");
 
