@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — Chapter 02</title>
+<meta name="description" content="Admin panel for the GeeksforGeeks Campus Body at Bundelkhand University, Jhansi — manage members and gallery.">
+<meta name="robots" content="noindex, nofollow">
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="styles.css">
 <style>
@@ -68,6 +70,16 @@
     </div>
 
     <section class="admin-card">
+      <h2>Site stats</h2>
+      <div style="display:flex;gap:2.5rem;flex-wrap:wrap">
+        <div><p class="stat-big" id="statViews">—</p>
+        <p class="mono" style="color:var(--muted);font-size:0.8rem">page views</p></div>
+        <div><p class="stat-big" id="statJoins">—</p>
+        <p class="mono" style="color:var(--muted);font-size:0.8rem">join conversions</p></div>
+      </div>
+    </section>
+
+    <section class="admin-card">
       <h2>Members</h2>
       <p class="stat-big" id="memberCount">—</p>
       <p class="mono" style="color:var(--muted);font-size:0.8rem;margin-bottom:8px">total joined</p>
@@ -111,7 +123,7 @@
   }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
-  function showDash() { loginCard.classList.add("hidden"); dash.classList.remove("hidden"); loadMembers(); loadMedia(); }
+  function showDash() { loginCard.classList.add("hidden"); dash.classList.remove("hidden"); loadMembers(); loadMedia(); loadStats(); }
 
   /* login */
   document.getElementById("loginForm").addEventListener("submit", function (e) {
@@ -131,6 +143,19 @@
     sessionStorage.removeItem(tokenKey);
     dash.classList.add("hidden"); loginCard.classList.remove("hidden");
   });
+
+  /* site stats (first-party conversion tracking) */
+  function loadStats() {
+    fetch("/api/events", { headers: authHeaders() })
+      .then(function (r) { if (r.status === 401) throw new Error("auth"); return r.json(); })
+      .then(function (d) {
+        if (d && d.ok && d.counts) {
+          document.getElementById("statViews").textContent = d.counts.page_view;
+          document.getElementById("statJoins").textContent = d.counts.join_success;
+        }
+      })
+      .catch(function () {});
+  }
 
   /* members */
   function loadMembers() {

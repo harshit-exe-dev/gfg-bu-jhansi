@@ -1,5 +1,34 @@
 // Chapter 02 — minimal interactions: hamburger nav + scroll reveal
 (function () {
+  // Toast notifications
+  var toastBox = document.getElementById("toasts");
+  function toast(text, isErr) {
+    if (!toastBox) return;
+    var el = document.createElement("div");
+    el.className = "toast" + (isErr ? " err" : "");
+    el.textContent = text;
+    toastBox.appendChild(el);
+    requestAnimationFrame(function () { el.classList.add("show"); });
+    setTimeout(function () {
+      el.classList.remove("show");
+      setTimeout(function () { el.remove(); }, 300);
+    }, 3600);
+    while (toastBox.children.length > 3) toastBox.firstChild.remove();
+  }
+
+  // First-party conversion tracking (no cookies, no third parties)
+  function track(event) {
+    try {
+      var payload = JSON.stringify({ event: event });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/events", new Blob([payload], { type: "application/json" }));
+      } else {
+        fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body: payload });
+      }
+    } catch (e) { /* analytics must never break the page */ }
+  }
+  track("page_view");
+
   // Always land at the top on fresh loads (no anchor). Keeps in-page
   // #section links working when the user taps them in the nav.
   if (!window.location.hash && "scrollRestoration" in window.history) {
@@ -71,19 +100,18 @@
   /* ---- join form ---- */
   var form = document.getElementById("joinForm");
   if (form) {
-    var msg = document.getElementById("joinMsg");
     var submit = document.getElementById("joinSubmit");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var name = document.getElementById("joinName").value.trim();
       var branch = document.getElementById("joinBranch").value;
       var year = document.getElementById("joinYear").value;
-      msg.className = "join-msg";
-      if (name.length < 2) { msg.textContent = "Please enter your full name."; msg.classList.add("err"); return; }
-      if (!branch) { msg.textContent = "Please pick your branch."; msg.classList.add("err"); return; }
-      if (!year) { msg.textContent = "Please pick your year."; msg.classList.add("err"); return; }
+      if (name.length < 2) { toast("Please enter your full name.", true); return; }
+      if (!branch) { toast("Please pick your branch.", true); return; }
+      if (!year) { toast("Please pick your year.", true); return; }
       submit.disabled = true;
-      msg.textContent = "Joining…";
+      var originalLabel = submit.textContent;
+      submit.textContent = "Joining…";
       fetch("/api/join", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -95,44 +123,49 @@
           if (d.ok) {
             refreshCount();
             if (d.duplicate) {
-              msg.textContent = "You're already on the list — see you at the next session.";
+              toast("You're already on the list — see you at the next session.");
             } else {
-              msg.textContent = "You're in! Welcome to Chapter 02.";
+              toast("You're in! Welcome to Chapter 02.");
+              track("join_success");
               form.reset();
             }
-            msg.classList.add("ok");
           } else {
-            msg.textContent = d.error || "Something went wrong. Please try again.";
-            msg.classList.add("err");
+            toast(d.error || "Something went wrong. Please try again.", true);
           }
         })
         .catch(function () {
-          msg.textContent = "Network hiccup — please try again.";
-          msg.classList.add("err");
+          toast("Network hiccup — please try again.", true);
         })
-        .finally(function () { submit.disabled = false; });
+        .finally(function () { submit.disabled = false; submit.textContent = originalLabel; });
     });
   }
 
   /* ---- gallery from /api/media ---- */
   var slots = document.querySelector(".gallery-slots");
   if (slots) {
+    var showEmpty = function () {
+      slots.innerHTML = '<div class="slot-empty rv in"><span class="mono">Event photos dropping soon — check back after the next session</span></div>';
+    };
     fetch("/api/media", { headers: { "Accept": "application/json" } })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d || !d.ok || !d.items || !d.items.length) return;
+        if (!d || !d.ok || !d.items || !d.items.length) { showEmpty(); return; };
         slots.innerHTML = "";
         d.items.slice(0, 6).forEach(function (it) {
           var fig = document.createElement("figure");
           fig.className = "gallery-item rv in";
+          // Serve modern formats + smart compression for Cloudinary uploads
+          var src = it.url.indexOf("res.cloudinary.com") !== -1
+            ? it.url.replace("/upload/", "/upload/f_auto,q_auto/")
+            : it.url;
           var media = it.kind === "video"
-            ? '<video src="' + it.url + '" muted loop playsinline preload="metadata"></video>'
-            : '<img src="' + it.url + '" alt="' + (it.caption || "Chapter 02 gallery").replace(/"/g, "&quot;") + '" loading="lazy">';
+            ? '<video src="' + src + '" muted loop playsinline preload="metadata"></video>'
+            : '<img src="' + src + '" alt="' + (it.caption || "Chapter 02 gallery").replace(/"/g, "&quot;") + '" loading="lazy">';
           fig.innerHTML = media + (it.caption ? '<figcaption class="mono"></figcaption>' : "");
           if (it.caption) fig.querySelector("figcaption").textContent = it.caption;
           slots.appendChild(fig);
         });
       })
-      .catch(function () { /* keep placeholders */ });
+      .catch(function () { showEmpty(); });
   }
 })();

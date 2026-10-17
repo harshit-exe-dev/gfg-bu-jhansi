@@ -2,7 +2,7 @@
 // GET  /api/join  -> { count }
 const { getDb } = require('../lib/db');
 
-const BRANCHES = ['CSE', 'IT', 'ECE', 'EE', 'ME', 'CE', 'AI&DS', 'Other'];
+const BRANCHES = ['CSE', 'ECE', 'ME', 'EI', 'Biotech Eng.', 'Biomedical Eng.', 'Foodtech Eng.', 'Other'];
 const YEARS = ['1', '2', '3', '4'];
 
 // best-effort per-IP throttle (serverless instances don't share memory,
@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const name = clean(body.name, 60);
-    const branch = clean(body.branch, 12);
+    const branch = clean(body.branch, 16);
     const year = clean(body.year, 2);
 
     if (name.length < 2) return res.status(400).json({ ok: false, error: 'Please enter your full name.' });
@@ -56,6 +56,27 @@ module.exports = async (req, res) => {
     if (exists) return res.status(200).json({ ok: true, duplicate: true, count });
 
     await col.insertOne({ name, nameLower: name.toLowerCase(), branch, year, joinedAt: new Date() });
+
+    // Email notification on new join — needs RESEND_API_KEY + NOTIFY_EMAIL
+    // env vars (free Resend tier). Skipped silently when not configured.
+    if (process.env.RESEND_API_KEY && process.env.NOTIFY_EMAIL) {
+      try {
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'onboarding@resend.dev',
+            to: process.env.NOTIFY_EMAIL,
+            subject: 'New member joined Chapter 02: ' + name,
+            text: name + ' (' + branch + ', Year ' + year + ') just joined via gfgbujhansi.vercel.app',
+          }),
+        });
+      } catch (e) { console.error('notify email failed', e); }
+    }
+
     return res.status(200).json({ ok: true, count: count + 1 });
   } catch (e) {
     console.error('join error', e);
