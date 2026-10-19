@@ -79,6 +79,7 @@
       <option value="3">3rd year</option><option value="4">4th year</option>
     </select>
     <div class="err" id="entry-err"></div>
+    <div id="diag" style="font-size:12px; text-align:center; margin-top:8px; color:var(--mut)">loading quiz engine…</div>
     <button class="btn" id="btn-start">Start quiz →</button>
     <p style="color:var(--mut); font-size:13px; text-align:center; margin-top:14px">10 questions · from today's session · fastest wins ties</p>
   </div>
@@ -114,6 +115,7 @@
 
 <script>
 // Every question below is from the session slides — nothing outside them.
+window.__quizStep = 'main-start';
 const QUESTIONS = [
   { q: "What does HTML stand for?",
     o: ["HyperText Markup Language", "HighText Machine Language", "Hyperlink Text Mode Language", "Home Tool Markup Language"], a: 0 },
@@ -274,6 +276,16 @@ $('btn-board').onclick = () => { renderBoard(); show('s-board'); };
 $('btn-refresh').onclick = renderBoard;
 $('btn-retry').onclick = startQuiz;
 $('btn-again').onclick = () => { show('s-entry'); };
+window.__quizReady = true;
+</script>
+<script>
+// diagnostic block (separate so it runs even if the main block above fails)
+(function () {
+  var d = document.getElementById('diag');
+  if (!d) return;
+  if (window.__quizReady) { d.textContent = '✓ Quiz engine ready'; d.style.color = '#2f8d46'; }
+  else { d.textContent = '✗ Quiz engine failed at: ' + (window.__quizStep || 'parse error'); d.style.color = '#e06c6c'; }
+})();
 </script>
 </body>
 </html>
